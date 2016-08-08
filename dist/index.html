@@ -38,6 +38,18 @@
         url = decodeURIComponent(url[1]);
       } else {
         url = "http://petstore.swagger.io/v2/swagger.json";
+//      url = "";
+      }
+      var file_name = window.location.search.match(/file=([^&]+)/);
+      var spec;
+      if (file_name && file_name.length > 1) {
+        var file = file_name[1];
+
+        $.ajaxSetup({async: false});
+        $.getJSON(file , function(data) {
+          spec = data;
+        });
+        $.ajaxSetup({async: true});
       }
 
       hljs.configure({
@@ -50,6 +62,7 @@
       }
       window.swaggerUi = new SwaggerUi({
         url: url,
+        spec: spec,
         dom_id: "swagger-ui-container",
         supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
         onComplete: function(swaggerApi, swaggerUi){
@@ -71,10 +84,10 @@
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
         },
-        docExpansion: "none",
-        jsonEditor: false,
+        docExpansion: "list",
+        jsonEditor: true,
         defaultModelRendering: 'schema',
-        showRequestHeaders: false
+        showRequestHeaders: true
       });
 
       window.swaggerUi.load();
